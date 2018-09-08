@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html >
+<head>
+
+    <title>NUTRITION</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.4/angular.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+    <style>
+
+        body  {
+            background-image: url("http://www.howmanyarethere.net/wp-content/uploads/2017/12/How-Many-Calories-Are-There-In-Cherries-3.jpg");
+            padding-top: 100px;
+        }
+        #btn{
+            border-radius: 12px;
+            background-color: white;
+            color: black;
+            border: 2px solid #555555;
+            font-size: 18px;
+        }
+        #btn:hover{
+            background-color: #555555;
+            color: white;
+        }
+
+
+
+    </style>
+</head>
+<body ng-app="nutrition" ng-controller="nutrictrl">
+<h1 align="center" style="font-size:70px;color:darkslategray; font-family: Calibri; font-style: italic">NOURISHMENT DETAILS</h1>
+<div align = "center" >
+    <input type="text" ng-model="Item" placeholder="Enter item" >
+
+    <button  id="btn" ng-click="getvalues()">Get Calories</button>
+    <div class="container">
+        <div >
+            <p   ng-bind= "Calories"  style="font-size: 25px"></p>
+            <p   ng-bind="Weightserved" style="font-size: 25px"></p>
+        </div>
+    </div>
+
+
+</div>
+<div align="center" id="Audio"></div>
+
+<script>
+    angular.module('nutrition', [])
+        .controller('nutrictrl', function($scope, $http) {
+
+            $scope.getvalues = function() {
+                console.log($scope.Item);
+                $http.get("https://api.nutritionix.com/v1_1/search/"+$scope.Item +"?results=0:1&fields=*&appId=70b022ac&appKey=866efe426c60339f669632ee72a03894").success(function(data)
+                {
+                    console.log(data);
+                    $scope.Calories = "Calories : " + data.hits[0].fields.nf_calories ;
+                    $scope.Weightserved = "Weight Served: " + data.hits[0].fields.nf_serving_weight_grams;
+                    var url = 'https://stream.watsonplatform.net/text-to-speech/api/v1/synthesize?username=31318019-229a-4600-966a-21de1394de71&password=QDOZPoJ6dLpY&text='+$scope.Item;
+
+                    document.getElementById("Audio").innerHTML= "<audio controls='' autoplay='' name='media'><source src='"+url+"' type='audio/ogg'></audio>";
+
+                })
+            }
+        });
+</script>
+</body>
+</html>
